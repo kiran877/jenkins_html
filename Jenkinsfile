@@ -16,6 +16,16 @@ pipeline {
             }
         }
 
+        stage('Stop Previous Container') {
+            steps {
+                script {
+                    // Try to stop any running container with the same name
+                    sh 'docker stop my-html-project || true'
+                    sh 'docker rm my-html-project || true'
+                }
+            }
+        }
+
         stage('Run Docker Container') {
             steps {
                 script {
