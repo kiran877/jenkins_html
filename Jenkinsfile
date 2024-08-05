@@ -1,6 +1,11 @@
 pipeline {
     agent any
 
+    environment {
+        DOCKER_IMAGE = "my-html-project"
+        DOCKER_IMAGE_VERSION = "latest"
+    }
+
     stages {
         stage('Checkout') {
             steps {
@@ -11,7 +16,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    docker.build('my-html-project')
+                    docker.build("${DOCKER_IMAGE}:${DOCKER_IMAGE_VERSION}")
                 }
             }
         }
@@ -20,8 +25,8 @@ pipeline {
             steps {
                 script {
                     // Try to stop any running container with the same name
-                    sh 'docker stop my-html-project || true'
-                    sh 'docker rm my-html-project || true'
+                    sh "docker stop ${DOCKER_IMAGE} || true"
+                    sh "docker rm ${DOCKER_IMAGE} || true"
                 }
             }
         }
@@ -29,7 +34,7 @@ pipeline {
         stage('Run Docker Container') {
             steps {
                 script {
-                    docker.image('my-html-project').run('-p 8081:80')
+                    docker.image("${DOCKER_IMAGE}:${DOCKER_IMAGE_VERSION}").run("-p 8080:80 --name ${DOCKER_IMAGE}")
                 }
             }
         }
