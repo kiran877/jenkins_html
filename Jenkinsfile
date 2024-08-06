@@ -34,7 +34,7 @@ pipeline {
         stage('Run Docker Container') {
             steps {
                 script {
-                    docker.image("${DOCKER_IMAGE}:${DOCKER_IMAGE_VERSION}").run("-p 8080:80 --name ${DOCKER_IMAGE}")
+                    docker.image("${DOCKER_IMAGE}:${DOCKER_IMAGE_VERSION}").run("-p 8081:80 --name ${DOCKER_IMAGE}")
                 }
             }
         }
@@ -42,7 +42,7 @@ pipeline {
 
     post {
         success {
-            echo 'Pipeline succeeded! The HTML page is available at http://<jenkins-server-ip>:8080'
+            echo 'Pipeline succeeded! The HTML page is available at http://<jenkins-server-ip>:8081'
         }
         failure {
             echo 'Pipeline failed!'
