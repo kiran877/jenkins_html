@@ -4,6 +4,8 @@ pipeline {
     environment {
         DOCKER_IMAGE = "my-html-project"
         DOCKER_IMAGE_VERSION = "latest"
+        DOCKERHUB_CREDENTIALS = 'docker-cred' 
+        DOCKERHUB_REPO = "saikiran078/jenkins_html" 
     }
 
     stages {
@@ -24,7 +26,6 @@ pipeline {
         stage('Stop Previous Container') {
             steps {
                 script {
-                    // Try to stop any running container with the same name
                     sh "docker stop ${DOCKER_IMAGE} || true"
                     sh "docker rm ${DOCKER_IMAGE} || true"
                 }
@@ -35,6 +36,16 @@ pipeline {
             steps {
                 script {
                     docker.image("${DOCKER_IMAGE}:${DOCKER_IMAGE_VERSION}").run("-p 8081:80 --name ${DOCKER_IMAGE}")
+                }
+            }
+        }
+
+        stage('Push to Docker Hub') {
+            steps {
+                script {
+                    docker.withRegistry('https://index.docker.io/v1/', "${DOCKERHUB_CREDENTIALS}") {
+                        docker.image("${DOCKER_IMAGE}:${DOCKER_IMAGE_VERSION}").push()
+                    }
                 }
             }
         }
